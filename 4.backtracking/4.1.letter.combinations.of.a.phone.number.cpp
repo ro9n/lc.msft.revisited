@@ -33,3 +33,28 @@ class Solution {
     return ans;
   }
 };
+
+const string t9[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+class Solution {
+public:
+    vector<string> letterCombinations(string d) {
+      if (d.empty()) return {};
+       vector<string> ans;
+        int n = d.size();
+        string curr = "";
+        
+        function<void(int)> solve = [&](int i) {
+            if (i == n) ans.push_back(curr);
+            else {
+                for(auto c: t9[d[i] - 48]) {
+                    curr += c, solve(i + 1), curr.pop_back();
+                }
+            }
+        };
+        
+        solve(0);
+        
+        return ans;
+    }
+};

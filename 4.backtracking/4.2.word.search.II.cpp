@@ -71,3 +71,74 @@ class Solution {
     return ans;
   }
 };
+
+
+struct trie {
+    public:
+    trie *c[26];
+    bool leaf;
+    
+    void insert(string s) {
+        int n = s.size();
+        trie *r = this;
+        
+        for(int i = 0; i < n; ++i) {
+            int h = s[i] - 97;
+            if (!r->c[h]) r->c[h] = new trie();
+            r = r->c[h];
+        }
+        r->leaf = 1;
+    }
+};
+
+#define WHITE 0
+#define GREY  1
+#define ff    first
+#define ss    second
+
+const pair<int, int> D[] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+
+class Solution {
+public:
+    vector<string> findWords(vector<vector<char>>& mat, vector<string>& words) {
+        trie *t = new trie();
+        unordered_set<string> found;
+        for(auto w: words) t->insert(w);
+        
+        int n = mat.size(), m = mat[0].size();
+        
+        vector<vector<int>> color(n, vector<int>(m, WHITE));
+        
+        vector<string> ans; string current = "";
+        function<void(int, int, trie*)> dfs = [&](int i, int j, trie *t) {
+            if (color[i][j]) return;
+            
+            current += mat[i][j];
+            color[i][j] = GREY;
+            if (t->leaf && !found.count(current)) found.insert(current), ans.push_back(current);
+            
+            for(int d = 0; d < 4; ++d) {
+                int ii = i + D[d].ff, jj = j + D[d].ss;
+                
+                if (ii < 0 || ii >= n || jj < 0 || jj >= m) continue;
+                int h = mat[ii][jj] - 97;
+                
+                if (!t->c[h]) continue;
+                dfs(ii, jj, t->c[h]);
+                
+            }
+            color[i][j] = WHITE;
+            current.pop_back();
+        };
+        
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                int h = mat[i][j] - 97;
+                if (t->c[h]) dfs(i, j, t->c[h]);
+            }
+        }
+        
+        return ans;
+    }
+};

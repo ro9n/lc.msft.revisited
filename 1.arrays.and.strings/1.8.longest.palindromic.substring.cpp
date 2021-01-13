@@ -28,3 +28,21 @@ class Solution {
     return s.substr(best.first, best.second);
   }
 };
+
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        int n = s.size(); int dp[n][n];
+        pair<int, int> best = {0, 1};
+        
+        for(int i = n - 1; i >= 0; --i) {
+            dp[i][i] = 1;
+            for(int j = i + 1; j < n; ++j) {
+                dp[i][j] = s[i] == s[j] && (i + 1 >= j ? 1 : dp[i + 1][j - 1]);
+                if (dp[i][j] && j - i + 1 > best.second) best = {i, j - i + 1};
+            }
+        }
+        
+        return s.substr(best.first, best.second);
+    }
+};
